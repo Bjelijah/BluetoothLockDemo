@@ -1,0 +1,3 @@
+rootProject.name = "BluetoothLockDemo"
+include ':app'
+include ':lib_opensource'
