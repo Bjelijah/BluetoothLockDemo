@@ -65,7 +65,7 @@ class BlueService:Service() {
             }
             if (mmSocket==null && mDevice!=null){
                 LOG.I("123","uuid=${result?.scanRecord?.serviceUuids!![0].uuid}")
-//                mmSocket = result?.device.createRfcommSocketToServiceRecord(result?.scanRecord?.serviceUuids!![0].uuid)
+                mmSocket = result?.device.createRfcommSocketToServiceRecord(result?.scanRecord?.serviceUuids!![0].uuid)
 //                mmSocket = result?.device.createInsecureRfcommSocketToServiceRecord(result?.scanRecord?.serviceUuids!![0].uuid)
                 var bond = result?.device.createBond()
 
@@ -74,8 +74,10 @@ class BlueService:Service() {
                 result?.device?.connectGatt(this@BlueService,true,object:BluetoothGattCallback(){
                     override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
                         super.onServicesDiscovered(gatt, status)
-                        LOG.I("123","$status")
+                        LOG.I("123","onServicesDiscovered  $status")
                     }
+
+
 
                     override fun onConnectionStateChange(
                         gatt: BluetoothGatt?,

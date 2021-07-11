@@ -41,5 +41,6 @@ dependencies {
 
     implementation project(':lib_opensource')
     implementation 'jp.kshoji:midi-driver:0.1.4:@aar'
+    implementation 'com.inuker.bluetooth:library:1.4.0'
     api 'com.cbj.Bjelijah:SDK:1.0.3'
 }
