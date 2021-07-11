@@ -161,6 +161,7 @@ public class Util {
         buf[5] = token[1];
         buf[6] = token[2];
         buf[7] = token[3];
+
         return encrypt(buf,s_key);
     }
 
