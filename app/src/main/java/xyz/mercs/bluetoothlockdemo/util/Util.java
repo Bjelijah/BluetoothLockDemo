@@ -1,5 +1,7 @@
 package xyz.mercs.bluetoothlockdemo.util;
 
+import com.cbj.sdk.libbase.utils.LOG;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -10,10 +12,15 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class Util {
 
+    public static byte [] s_key = {
+        0x3a,0x60,0x43,0x2a,0x5c,0x01,0x21,0x1f,0x29,0x1e,0x0f,0x4e,0x0c,0x13,0x28,0x25
+    };
+
+
     /**
      * @Description 加密
      */
-    public static byte [] Encrypt(byte [] sSrc, byte [] sKey){
+    public static byte [] encrypt(byte [] sSrc, byte [] sKey){
         try{
             SecretKeySpec skeySpec = new SecretKeySpec(sKey,"AES");
             Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
@@ -26,7 +33,13 @@ public class Util {
         }
     }
 
-    public static byte [] Decrypt(byte [] sSrc,byte [] sKey){
+    /**
+     * 解密
+     * @param sSrc
+     * @param sKey
+     * @return
+     */
+    public static byte [] decrypt(byte [] sSrc,byte [] sKey){
         try{
             SecretKeySpec skeySpec = new SecretKeySpec(sKey,"AES");
             Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
@@ -38,6 +51,141 @@ public class Util {
             return null;
         }
     }
+
+    public static byte[] sendGetTokenProtocol(){
+        byte [] buf = new byte[16];
+        buf[0] = 0x06;
+        buf[1] = 0x01;
+        buf[2] = 0x01;
+        buf[3] = 0x01;
+//        buf[4] = 0x2d;
+//        buf[5] = 0x1a;
+//        buf[6] = 0x68;
+//        buf[7] = 0x3d;
+//        buf[8] = 0x48;
+//        buf[9] = 0x27;
+//        buf[10] = 0x1a;
+//        buf[11] = 0x18;
+//        buf[12] = 0x31;
+//        buf[13] = 0x6e;
+//        buf[14] = 0x47;
+//        buf[15] = 0x1a;
+
+        return encrypt(buf,s_key);
+    }
+
+    public static byte [] openLock(byte [] token){
+        byte [] buf = new byte[16];
+        buf[0] = 0x05;
+        buf[1] = 0x01;
+        buf[2] = 0x06;
+        buf[3] = 0x30;
+        buf[4] = 0x30;
+        buf[5] = 0x30;
+        buf[6] = 0x30;
+        buf[7] = 0x30;
+        buf[8] = 0x30;
+        buf[9] = token[0];
+        buf[10] = token[1];
+        buf[11] = token[2];
+        buf[12] = token[3];
+
+
+//        buf[0] = 0x05;
+//        buf[1] = 0x01;
+//        buf[2] = token[0];
+//        buf[3] = token[1];
+//        buf[4] = token[2];
+//        buf[5] = token[3];
+//        buf[6] = 0x06;
+//        buf[7] = 0x30;
+//        buf[8] = 0x30;
+//        buf[9] = 0x30;
+//        buf[10] = 0x30;
+//        buf[11] = 0x30;
+//        buf[12] = 0x30;
+
+
+
+        return encrypt(buf,s_key);
+    }
+
+    public static byte [] closeLock(byte [] token){
+        byte [] buf = new byte[16];
+        buf[0] = 0x05;
+        buf[1] = 0x0c;
+        buf[2] = 0x01;
+        buf[3] = 0x01;
+        buf[4] = token[0];
+        buf[5] = token[1];
+        buf[6] = token[2];
+        buf[7] = token[3];
+
+        return encrypt(buf,s_key);
+    }
+
+    public static byte [] getPower(byte [] token){
+        byte [] buf = new byte[16];
+        buf[0] = 0x02;
+        buf[1] = 0x01;
+        buf[2] = 0x01;
+        buf[3] = 0x01;
+        buf[4] = token[0];
+        buf[5] = token[1];
+        buf[6] = token[2];
+        buf[7] = token[3];
+        return encrypt(buf,s_key);
+    }
+
+    public static byte [] getStatus(byte [] token){
+        byte [] buf = new byte[16];
+        buf[0] = 0x05;
+        buf[1] = 0x0e;
+        buf[2] = 0x01;
+        buf[3] = 0x01;
+        buf[4] = token[0];
+        buf[5] = token[1];
+        buf[6] = token[2];
+        buf[7] = token[3];
+        return encrypt(buf,s_key);
+    }
+
+    public static byte [] getPam(byte [] token){
+        LOG.INSTANCE.I("123","token="+Util.byte2HexStr(token));
+        byte [] buf = new byte[16];
+        buf[0] = 0x05;
+        buf[1] = 0x4e;
+        buf[2] = 0x01;
+        buf[3] = 0x01;
+        buf[4] = token[0];
+        buf[5] = token[1];
+        buf[6] = token[2];
+        buf[7] = token[3];
+
+        return encrypt(buf,s_key);
+    }
+
+    public static byte [] decryptMsg(byte [] src){
+        byte [] buf = decrypt(src,s_key);
+//        for (int i=0;i<buf.length;i++){
+//            LOG.INSTANCE.I("123","decryptMsg  ["+i+"] "+String.format("0x%x",buf[i]));
+//        }
+        return buf;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private static final char[] DIGITS_LOWER = {'0', '1', '2', '3', '4', '5',
             '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
