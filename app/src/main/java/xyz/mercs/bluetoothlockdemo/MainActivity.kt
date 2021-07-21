@@ -22,7 +22,7 @@ import xyz.mercs.bluetoothlockdemo.util.Util
 
 class MainActivity : BaseActivity() {
 
-    private val mTestMac = "CB:57:B3:DA:91:FD"
+    private val mTestMac = "C4:56:D2:3F:99:3B"
 
     private val mBinding: ActivityMainBinding by inflate()
 
@@ -57,7 +57,7 @@ class MainActivity : BaseActivity() {
            // BLEManager.sInstance.read()
         }
         mBinding.btn3.setOnClickListener {
-            BLEManager.sInstance.write(Util.getPower(token))
+            BLEManager.sInstance.write(Util.openLock(token))
         }
 
     }
