@@ -10,7 +10,6 @@ import android.os.IBinder
 import android.util.ArrayMap
 import android.util.Log
 import com.cbj.sdk.libbase.utils.LOG
-import xyz.mercs.bluetoothlockdemo.dev.McBluetoothMidiKeyboard
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
