@@ -52,28 +52,27 @@ public class Util {
         }
     }
 
+    public static byte [] decryptMsg(byte [] src){
+        byte [] buf = decrypt(src,s_key);
+        return buf;
+    }
+
+    /**
+     * @Description token
+     */
     public static byte[] sendGetTokenProtocol(){
         byte [] buf = new byte[16];
         buf[0] = 0x06;
         buf[1] = 0x01;
         buf[2] = 0x01;
         buf[3] = 0x01;
-//        buf[4] = 0x2d;
-//        buf[5] = 0x1a;
-//        buf[6] = 0x68;
-//        buf[7] = 0x3d;
-//        buf[8] = 0x48;
-//        buf[9] = 0x27;
-//        buf[10] = 0x1a;
-//        buf[11] = 0x18;
-//        buf[12] = 0x31;
-//        buf[13] = 0x6e;
-//        buf[14] = 0x47;
-//        buf[15] = 0x1a;
 
         return encrypt(buf,s_key);
     }
 
+    /**
+     * @Description 开锁
+     */
     public static byte [] openLock(byte [] token){
         byte [] buf = new byte[16];
         buf[0] = 0x05;
@@ -110,6 +109,9 @@ public class Util {
         return encrypt(buf,s_key);
     }
 
+    /**
+     * @Description  关锁
+     */
     public static byte [] closeLock(byte [] token){
         byte [] buf = new byte[16];
         buf[0] = 0x05;
@@ -124,6 +126,9 @@ public class Util {
         return encrypt(buf,s_key);
     }
 
+    /**
+     * @Description 获取电量
+     */
     public static byte [] getPower(byte [] token){
         byte [] buf = new byte[16];
         buf[0] = 0x02;
@@ -134,9 +139,13 @@ public class Util {
         buf[5] = token[1];
         buf[6] = token[2];
         buf[7] = token[3];
+
         return encrypt(buf,s_key);
     }
 
+    /**
+     * @Description 获取状态
+     */
     public static byte [] getStatus(byte [] token){
         byte [] buf = new byte[16];
         buf[0] = 0x05;
@@ -150,6 +159,9 @@ public class Util {
         return encrypt(buf,s_key);
     }
 
+    /**
+     * @Description 获取参数
+     */
     public static byte [] getPam(byte [] token){
         LOG.INSTANCE.I("123","token="+Util.byte2HexStr(token));
         byte [] buf = new byte[16];
@@ -165,13 +177,7 @@ public class Util {
         return encrypt(buf,s_key);
     }
 
-    public static byte [] decryptMsg(byte [] src){
-        byte [] buf = decrypt(src,s_key);
-//        for (int i=0;i<buf.length;i++){
-//            LOG.INSTANCE.I("123","decryptMsg  ["+i+"] "+String.format("0x%x",buf[i]));
-//        }
-        return buf;
-    }
+
 
 
 

@@ -16,13 +16,17 @@ import com.cbj.sdk.libui.mvp.BaseActivity
 import com.cbj.sdk.libui.mvp.inflate
 import com.inuker.bluetooth.library.BluetoothClient
 import com.tbruyelle.rxpermissions2.RxPermissions
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import xyz.mercs.bluetoothlockdemo.databinding.ActivityMainBinding
 import xyz.mercs.bluetoothlockdemo.service.BlueService
 import xyz.mercs.bluetoothlockdemo.util.Util
+import java.util.concurrent.TimeUnit
 
 class MainActivity : BaseActivity() {
 
-    private val mTestMac = "CB:57:B3:DA:91:FD"
+    private val mTestMac = "C4:56:D2:3F:99:3B"
 
     private val mBinding: ActivityMainBinding by inflate()
 
@@ -57,9 +61,54 @@ class MainActivity : BaseActivity() {
            // BLEManager.sInstance.read()
         }
         mBinding.btn3.setOnClickListener {
-            BLEManager.sInstance.write(Util.getPam(token))
+            BLEManager.sInstance.write(Util.openLock(token))
+        }
+        mBinding.btn4.setOnClickListener {
+
+            RxPermissions(this).request(
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.CAMERA
+            ).subscribe {
+                startActivityForResult(Intent(this,QRcodeScanActivity::class.java),QRcodeScanActivity.REQ)
+            }
+
         }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == QRcodeScanActivity.REQ && resultCode == QRcodeScanActivity.RES){
+            var qr = data?.getStringExtra("qr")
+            LOG.I("123","qr=$qr")
+            BLEManager.sInstance.mac = qr
+            BLEManager.sInstance.connect()
+            doTaskDelay({
+                var tokenReq = Util.sendGetTokenProtocol()
+                BLEManager.sInstance.write(tokenReq)
+            },1000){
+                doTaskDelay({
+                    BLEManager.sInstance.write(Util.openLock(token))
+                },1000){
+
+                }
+            }
+
+        }
+    }
+
+    private fun doTaskDelay(task:()->Unit,delayMs:Long,cb:()->Unit){
+        Observable.timer(delayMs,TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                task()
+                cb()
+            },{
+                it.printStackTrace()
+            })
     }
 
 
@@ -73,6 +122,11 @@ class MainActivity : BaseActivity() {
             token[1] = bs[4]
             token[2] = bs[5]
             token[3] = bs[6]
+
+//            token[0] = bs[6]
+//            token[1] = bs[5]
+//            token[2] = bs[4]
+//            token[3] = bs[3]
 
         }
 

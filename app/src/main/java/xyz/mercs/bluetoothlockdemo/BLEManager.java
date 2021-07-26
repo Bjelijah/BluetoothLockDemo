@@ -34,7 +34,6 @@ public class BLEManager {
     UUID serverUUId = null;
     UUID characterUUId_w = null;
     UUID characterUUId_r = null;
-
     interface INotifyListener{
         public void onNotify(byte [] buf);
     }
